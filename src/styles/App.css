@@ -1,0 +1,17 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  padding: 1em;
+}
+
+.main-container {
+  display: grid;
+}
+
+@media (min-width: 1024px) {
+  .main-container {
+    grid-template-columns: 400px 1fr;
+  }
+}

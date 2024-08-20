@@ -1,0 +1,46 @@
+.form-container {
+  --size-bezel: 2rem;
+  --size-radius: 4px;
+}
+
+.form-container h1,
+h2 {
+  font-weight: 900;
+}
+
+.form-container a {
+  color: #2563eb;
+}
+
+.card {
+  padding: var(--size-bezel);
+  margin: var(--size-bezel) 0;
+  border-radius: var(--size-radius);
+  border: 3px solid;
+}
+
+.input__label {
+  display: block;
+  font-weight: bold;
+  padding: 1em 0 0.4em 0;
+}
+
+.input__field {
+  width: 100%;
+  border: 3px solid;
+  padding: 0.75rem;
+  border-radius: var(--size-radius);
+}
+
+.education-form.hidden {
+  display: none;
+}
+
+.form-container .button {
+  background: white;
+  color: #2563eb;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  padding-top: 1em;
+}
