@@ -1,0 +1,94 @@
+.resumepreview {
+  display: grid;
+  grid-template: repeat(4, max-content) / 1fr 1fr;
+  grid-template-areas:
+    "name name"
+    "contact work"
+    "education work"
+    "skill work";
+  gap: 1em;
+  height: 1000px;
+}
+
+.resumepreview h2,
+h3,
+h4 {
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.resumepreview h2 {
+  grid-area: 1 / 1 / 2 / 3;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.resumepreview h3 {
+  padding-bottom: 1.2rem;
+  font-size: 1.4rem;
+}
+
+.resumepreview h4 {
+  letter-spacing: normal;
+}
+
+.resumepreview .education h4 {
+  padding-bottom: 0.4rem;
+}
+
+.sub-section {
+  margin-bottom: var(--size-bezel);
+}
+
+.skill ul {
+  padding-inline: 1rem;
+}
+
+.sub-section ul {
+  padding: 1rem;
+}
+
+.contact {
+  grid-area: contact;
+}
+
+.education {
+  grid-area: education;
+}
+
+.skill {
+  grid-area: skill;
+}
+
+.work {
+  grid-area: work;
+}
+
+.duration {
+  font-weight: 600;
+}
+
+.sub-section p.company {
+  font-weight: 600;
+  color: #71717a;
+}
+
+.contact .phone::before {
+  content: url("../assets/svg/phone.svg");
+}
+
+.contact .email::before {
+  content: url("../assets/svg/at.svg");
+}
+
+.contact .phone::before,
+.contact .email::before {
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  margin-right: 0.4em;
+}
+
+.resumepreview ul li {
+  font-size: 0.9rem;
+}
