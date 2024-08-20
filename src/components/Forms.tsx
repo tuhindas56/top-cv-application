@@ -9,6 +9,17 @@ const Header = () => (
   </header>
 )
 
+const Name = () => (
+  <form className="card">
+    <h2>Identity</h2>
+
+    <label className="input__label" htmlFor="name">
+      Name
+    </label>
+    <input className="input__field" type="text" name="name" id="name" placeholder="John Doe" required />
+  </form>
+)
+
 const ContactDetails = () => {
   return (
     <form className="card">
@@ -88,6 +99,7 @@ const WorkExperience = () => {
 const Forms = () => (
   <div className="inter form-container">
     <Header />
+    <Name />
     <ContactDetails />
     <EducationDetails />
     <SkillDetails />

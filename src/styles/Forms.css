@@ -1,8 +1,3 @@
-.form-container {
-  --size-bezel: 2rem;
-  --size-radius: 4px;
-}
-
 .form-container h1,
 h2 {
   font-weight: 900;
@@ -10,13 +5,6 @@ h2 {
 
 .form-container a {
   color: #2563eb;
-}
-
-.card {
-  padding: var(--size-bezel);
-  margin: var(--size-bezel) 0;
-  border-radius: var(--size-radius);
-  border: 3px solid;
 }
 
 .input__label {
