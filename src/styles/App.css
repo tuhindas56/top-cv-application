@@ -1,3 +1,8 @@
+:root {
+  --size-bezel: 2rem;
+  --size-radius: 4px;
+}
+
 html {
   font-size: 16px;
 }
@@ -10,8 +15,31 @@ body {
   display: grid;
 }
 
+.card {
+  padding: var(--size-bezel);
+  margin: var(--size-bezel) 0;
+  border-radius: var(--size-radius);
+  border: 3px solid;
+}
+
 @media (min-width: 1024px) {
+  body {
+    display: grid;
+    place-content: center;
+  }
+
   .main-container {
     grid-template-columns: 400px 1fr;
+    column-gap: 2rem;
+  }
+}
+
+@media print {
+  .form-container {
+    display: none;
+  }
+
+  .resumepreview {
+    margin: 0;
   }
 }
