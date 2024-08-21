@@ -23,12 +23,3 @@ h2 {
 .education-form.hidden {
   display: none;
 }
-
-.form-container .button {
-  background: white;
-  color: #2563eb;
-  text-align: left;
-  border: none;
-  cursor: pointer;
-  padding-top: 1em;
-}

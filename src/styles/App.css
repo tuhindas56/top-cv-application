@@ -22,6 +22,15 @@ body {
   border: 3px solid;
 }
 
+.button {
+  background: white;
+  color: #2563eb;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  padding-top: 1em;
+}
+
 @media (min-width: 1024px) {
   body {
     display: grid;
