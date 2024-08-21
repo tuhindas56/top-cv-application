@@ -40,12 +40,8 @@ h4 {
   margin-bottom: var(--size-bezel);
 }
 
-.skill ul {
-  padding-inline: 1rem;
-}
-
 .sub-section ul {
-  padding: 1rem;
+  padding-block: 1rem;
 }
 
 h3.role {
@@ -53,6 +49,10 @@ h3.role {
   margin: 0;
   color: #71717a;
   letter-spacing: normal;
+}
+
+.name-and-role {
+  grid-area: name;
 }
 
 .contact {
