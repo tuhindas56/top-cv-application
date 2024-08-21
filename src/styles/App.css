@@ -23,12 +23,33 @@ body {
 }
 
 .button {
+  height: max-content;
+  width: max-content;
   background: white;
   color: #2563eb;
   text-align: left;
   border: none;
   cursor: pointer;
-  padding-top: 1em;
+  margin: 1em 0 0.6em 0;
+}
+
+ul {
+  padding-inline: 1rem;
+}
+
+.list-item {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-item:before {
+  content: "\2022";
+  position: absolute;
+  left: -18px;
+}
+.list-item button {
+  margin-block: 0.4rem;
 }
 
 @media (min-width: 1024px) {
