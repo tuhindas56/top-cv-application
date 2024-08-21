@@ -25,8 +25,8 @@ const ContactSection = ({ contact }: { contact: Contact }) => (
   <section className="contact">
     <h3 className="jsf-sans">Contact</h3>
 
-    <p className="phone inter">{contact.phone ? contact.phone : "+1-XXX-XXX-XXXX"}</p>
     <p className="email inter">{contact.email ? contact.email : "youremail@example.com"}</p>
+    <p className="phone inter">{contact.phone ? contact.phone : "+1-XXX-XXX-XXXX"}</p>
   </section>
 )
 
@@ -54,22 +54,30 @@ const EducationSection = () => (
   <section className="education">
     <h3 className="jsf-sans">Education</h3>
 
-    <EducationQualification isSchool={false} />
-    <EducationQualification isSchool={true} />
+    {/* <EducationQualification isSchool={false} />
+    <EducationQualification isSchool={true} /> */}
   </section>
 )
 
-const SkillsSection = () => (
-  <section className="skill">
-    <h3 className="jsf-sans">Skills</h3>
+const SkillsSection = ({ skills }: { skills: Map<string, string> }) => {
+  const skillsArray = Array.from(skills)
 
-    <ul className="inter">
-      <li>A skill</li>
-      <li>Another skill</li>
-      <li>Very valuable skill</li>
-    </ul>
-  </section>
-)
+  return (
+    <section className="skill">
+      <h3 className="jsf-sans">Skills</h3>
+
+      {!skillsArray.length ? (
+        <p className="inter">Skills appear here</p>
+      ) : (
+        <ul className="inter">
+          {skillsArray.map(([id, skill]) => (
+            <li key={id}>{skill}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
 
 const WorkExperience = ({
   company = "Tempest",
@@ -96,22 +104,30 @@ const WorkExperienceSection = () => (
   <section className="work">
     <h3 className="jsf-sans">Work Experience</h3>
 
+    {/* <WorkExperience />
     <WorkExperience />
-    <WorkExperience />
-    <WorkExperience />
+    <WorkExperience /> */}
   </section>
 )
 
-const ResumePreview = ({ identity, contact }: { identity: Identity; contact: Contact }) => (
+const ResumePreview = ({
+  identity,
+  contact,
+  skills,
+}: {
+  identity: Identity
+  contact: Contact
+  skills: Map<string, string>
+}) => (
   <div className="resumepreview card">
-    <div>
+    <div className="name-and-role">
       <h2 className="jsf-sans">{identity.name ? identity.name : "Name"}</h2>
       <h3 className="jsf-sans role">{identity.role ? identity.role : "Role"}</h3>
     </div>
 
     <ContactSection contact={contact} />
     <EducationSection />
-    <SkillsSection />
+    <SkillsSection skills={skills} />
     <WorkExperienceSection />
 
     <button onClick={() => window.print()} className="button inter savecv">
