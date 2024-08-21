@@ -1,4 +1,5 @@
 import "../styles/ResumePreview.css"
+import { Contact, Identity } from "../sharedTypes"
 
 interface Duration {
   from: string
@@ -20,12 +21,12 @@ interface WorkExperienceDetail {
   role: string
 }
 
-const ContactSection = () => (
+const ContactSection = ({ contact }: { contact: Contact }) => (
   <section className="contact">
     <h3 className="jsf-sans">Contact</h3>
 
-    <p className="phone inter">123-456-7890</p>
-    <p className="email inter">youremail@example.com</p>
+    <p className="phone inter">{contact.phone ? contact.phone : "+1-XXX-XXX-XXXX"}</p>
+    <p className="email inter">{contact.email ? contact.email : "youremail@example.com"}</p>
   </section>
 )
 
@@ -101,14 +102,21 @@ const WorkExperienceSection = () => (
   </section>
 )
 
-const ResumePreview = () => (
+const ResumePreview = ({ identity, contact }: { identity: Identity; contact: Contact }) => (
   <div className="resumepreview card">
-    <h2 className="jsf-sans">John Davis</h2>
+    <div>
+      <h2 className="jsf-sans">{identity.name ? identity.name : "Name"}</h2>
+      <h3 className="jsf-sans role">{identity.role ? identity.role : "Role"}</h3>
+    </div>
 
-    <ContactSection />
+    <ContactSection contact={contact} />
     <EducationSection />
     <SkillsSection />
     <WorkExperienceSection />
+
+    <button onClick={() => window.print()} className="button inter savecv">
+      Save CV
+    </button>
   </div>
 )
 
