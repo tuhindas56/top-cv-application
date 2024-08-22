@@ -1,5 +1,6 @@
+import { getYear } from "date-fns"
 import "../styles/ResumePreview.css"
-import { Contact, Education, Identity } from "../sharedTypes"
+import { Contact, Education, Identity, WorkExperience } from "../sharedTypes"
 
 const ContactSection = ({ contact }: { contact: Contact }) => (
   <section className="contact">
@@ -19,7 +20,7 @@ const EducationQualification = ({ course, durationFrom, durationTo, institute }:
     {course && <p className="course bold">{course}</p>}
 
     <p className="duration jsf-sans">
-      {durationFrom} - {durationTo}
+      {getYear(durationFrom)} - {getYear(durationTo)}
     </p>
   </li>
 )
@@ -70,47 +71,51 @@ const SkillsSection = ({ skills }: { skills: Map<string, string> }) => {
   )
 }
 
-// const WorkExperienceDetail = ({
-//   company = "Tempest",
-//   duration = { from: "20XX", to: "20XX" },
-//   responsibilities = ["slacked off", "also slacked off", "slacked off some more"],
-//   role = "Web Developer",
-// }: WorkExperience) => (
-//   <div className="sub-section">
-//     <h4 className="jsf-sans">{role}</h4>
-//     <p className="company jsf-sans">{company}</p>
-//     <p className="duration jsf-sans">
-//       {duration.from} - {duration.to}
-//     </p>
+const WorkExperienceDetail = ({ work }: { work: WorkExperience }) => (
+  <div className="sub-section">
+    <h4 className="jsf-sans">{work.role}</h4>
+    <p className="company jsf-sans">{work.workplace}</p>
+    <p className="duration jsf-sans">
+      {getYear(work.durationFrom)} -{" "}
+      {getYear(work.durationTo) === getYear(new Date()) ? "Present" : getYear(work.durationTo)}
+    </p>
 
-//     <ul className="inter">
-//       {responsibilities.map((responsibility, index) => (
-//         <li key={index}>{responsibility}</li>
-//       ))}
-//     </ul>
-//   </div>
-// )
-
-const WorkExperienceSection = () => (
-  <section className="work">
-    <h3 className="jsf-sans">Work Experience</h3>
-
-    {/* <WorkExperience />
-    <WorkExperience />
-    <WorkExperience /> */}
-  </section>
+    <ul className="inter">
+      {work.responsibilities.split("\n").map((responsibility: string, index: number) => (
+        <li key={index}>{responsibility}</li>
+      ))}
+    </ul>
+  </div>
 )
+
+const WorkExperienceSection = ({ workxp }: { workxp: Map<string, WorkExperience> }) => {
+  const workArray = Array.from(workxp)
+
+  return (
+    <section className="work">
+      <h3 className="jsf-sans">Work Experience</h3>
+
+      {!workArray.length ? (
+        <p className="inter">Work history appears here</p>
+      ) : (
+        workArray.map(([id, work]) => <WorkExperienceDetail key={id} work={work} />)
+      )}
+    </section>
+  )
+}
 
 const ResumePreview = ({
   identity,
   contact,
   education,
   skills,
+  workxp,
 }: {
   identity: Identity
   contact: Contact
   education: Map<string, Education>
   skills: Map<string, string>
+  workxp: Map<string, WorkExperience>
 }) => (
   <div className="resumepreview card">
     <div className="name-and-role">
@@ -121,7 +126,7 @@ const ResumePreview = ({
     <ContactSection contact={contact} />
     <EducationSection education={education} />
     <SkillsSection skills={skills} />
-    <WorkExperienceSection />
+    <WorkExperienceSection workxp={workxp} />
 
     <button onClick={() => window.print()} className="button inter savecv">
       Save CV

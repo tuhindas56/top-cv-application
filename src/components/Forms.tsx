@@ -1,40 +1,59 @@
 import { useState } from "react"
 import { v4 as uuid } from "uuid"
 import { ReactFormInputEvent } from "../App"
-import { Contact, Education, Identity } from "../sharedTypes"
+import { Contact, Education, Identity, WorkExperience } from "../sharedTypes"
 import "../styles/Forms.css"
 
 type SetContactState = React.Dispatch<React.SetStateAction<Contact>>
 type SetIdentityState = React.Dispatch<React.SetStateAction<Identity>>
 type SetEducationState = React.Dispatch<React.SetStateAction<Map<string, Education>>>
 type SetSkillState = React.Dispatch<React.SetStateAction<Map<string, string>>>
+type SetWorkState = React.Dispatch<React.SetStateAction<Map<string, WorkExperience>>>
 
 interface FormsProps {
   contact: { contact: Contact; setContact: SetContactState }
   identity: { identity: Identity; setIdentity: SetIdentityState }
   education: { education: Map<string, Education>; setEducation: SetEducationState }
   skills: { skills: Map<string, string>; setSkills: SetSkillState }
+  work: { workxp: Map<string, WorkExperience>; setWorkxp: SetWorkState }
 }
 
-const Header = () => (
+interface HeaderProps {
+  setIdentity: SetIdentityState
+  setContact: SetContactState
+  setEducation: SetEducationState
+  setSkills: SetSkillState
+  setWorkxp: SetWorkState
+}
+
+const Header = ({ setIdentity, setContact, setEducation, setSkills, setWorkxp }: HeaderProps) => (
   <header className="card">
     <h1 className="inter">CV Generator</h1>
 
-    <a href="http://github.com/tuhindas56/top-cv-application" target="_blank" rel="noopener noreferrer">
-      Source
-    </a>
-    {" | "}
-    <a
-      href="https://www.canva.com/p/templates/EAFC-9sdKHg-black-and-white-minimalist-simple-design-freelancer-resume/"
-      target="_blank"
-      rel="noopener noreferrer"
+    <p>
+      built by{" "}
+      <a href="http://github.com/tuhindas56/top-cv-application" target="_blank" rel="noopener noreferrer">
+        Tuhin Das
+      </a>
+    </p>
+
+    <button
+      className="button"
+      onClick={() => {
+        setIdentity({ name: "", role: "" })
+        setContact({ email: "", phone: "" })
+        setEducation(new Map())
+        setSkills(new Map())
+        setWorkxp(new Map())
+      }}
+      style={{ display: "block", margin: "1rem 0 0 0", padding: "0" }}
     >
-      Design
-    </a>
+      Reset all inputs
+    </button>
   </header>
 )
 
-const IdentityDetails = ({ identity: { identity, setIdentity } }: { identity: FormsProps["identity"] }) => {
+const IdentityForm = ({ identity: { identity, setIdentity } }: { identity: FormsProps["identity"] }) => {
   const handleNameChange = (event: ReactFormInputEvent) => {
     const target = event.target as HTMLInputElement
     setIdentity({ ...identity, name: target.value })
@@ -78,7 +97,7 @@ const IdentityDetails = ({ identity: { identity, setIdentity } }: { identity: Fo
   )
 }
 
-const ContactDetails = ({ contact: { contact, setContact } }: { contact: FormsProps["contact"] }) => {
+const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps["contact"] }) => {
   const handleEmailChange = (event: ReactFormInputEvent) => {
     const target = event.target as HTMLInputElement
     setContact({ ...contact, email: target.value })
@@ -122,14 +141,14 @@ const ContactDetails = ({ contact: { contact, setContact } }: { contact: FormsPr
   )
 }
 
-const EducationDetails = ({ education: { education, setEducation } }: { education: FormsProps["education"] }) => {
+const EducationForm = ({ education: { education, setEducation } }: { education: FormsProps["education"] }) => {
   const [educationInputs, setEducationInputs] = useState({
     courseInput: "",
     durationFromInput: "",
     durationToInput: "",
     instituteInput: "",
   })
-  const [minDate, setMinDate] = useState("")
+  const [date, setDate] = useState({ min: "", max: "" })
   const [editing, setEditing] = useState({ id: "", beingEdited: false })
 
   const handleInstituteInputChange = (event: ReactFormInputEvent) => {
@@ -144,12 +163,13 @@ const EducationDetails = ({ education: { education, setEducation } }: { educatio
 
   const handleDurationFromInputChange = (event: ReactFormInputEvent) => {
     const target = event.target as HTMLInputElement
-    setMinDate(target.value)
+    setDate({ ...date, min: target.value })
     setEducationInputs({ ...educationInputs, durationFromInput: target.value })
   }
 
   const handleDurationToInputChange = (event: ReactFormInputEvent) => {
     const target = event.target as HTMLInputElement
+    setDate({ ...date, max: target.value })
     setEducationInputs({ ...educationInputs, durationToInput: target.value })
   }
 
@@ -264,6 +284,7 @@ const EducationDetails = ({ education: { education, setEducation } }: { educatio
           id="durationFrom"
           onChange={(event) => handleDurationFromInputChange(event)}
           value={educationInputs.durationFromInput}
+          max={date.max}
         />
 
         <label htmlFor="durationTo" className="input__label">
@@ -276,7 +297,7 @@ const EducationDetails = ({ education: { education, setEducation } }: { educatio
           id="durationTo"
           onChange={(event) => handleDurationToInputChange(event)}
           value={educationInputs.durationToInput}
-          min={minDate}
+          min={date.min}
         />
 
         {editing.beingEdited ? (
@@ -320,7 +341,7 @@ const EducationDetails = ({ education: { education, setEducation } }: { educatio
   )
 }
 
-const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["skills"] }) => {
+const SkillForm = ({ skills: { skills, setSkills } }: { skills: FormsProps["skills"] }) => {
   const [skillInput, setSkillInput] = useState("")
   const [editing, setEditing] = useState({ id: "", beingEdited: false })
 
@@ -424,28 +445,249 @@ const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["s
   )
 }
 
-const WorkExperience = () => {
-  const handleClick = () => {
-    alert("added")
+const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps["work"] }) => {
+  const [workInputs, setWorkInputs] = useState({
+    workplace: "",
+    role: "",
+    durationFrom: "",
+    durationTo: "",
+    responsibilities: "",
+  })
+  const [editing, setEditing] = useState({ id: "", beingEdited: false })
+  const [date, setDate] = useState({ min: "", max: "" })
+
+  const handleAddWork = () => {
+    if (
+      workInputs.workplace &&
+      workInputs.durationFrom &&
+      workInputs.durationTo &&
+      workInputs.role &&
+      workInputs.responsibilities
+    ) {
+      const newMap = new Map(workxp)
+      newMap.set(uuid(), {
+        workplace: workInputs.workplace,
+        durationFrom: workInputs.durationFrom,
+        durationTo: workInputs.durationTo,
+        role: workInputs.role,
+        responsibilities: workInputs.responsibilities,
+      })
+
+      setWorkxp(newMap)
+      setWorkInputs({
+        workplace: "",
+        durationFrom: "",
+        durationTo: "",
+        role: "",
+        responsibilities: "",
+      })
+    }
   }
+
+  const handleWorkplaceInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setWorkInputs({ ...workInputs, workplace: target.value })
+  }
+
+  const handleRoleInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setWorkInputs({ ...workInputs, role: target.value })
+  }
+
+  const handleDurationFromInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setDate({ ...date, min: target.value })
+    setWorkInputs({ ...workInputs, durationFrom: target.value })
+  }
+
+  const handleDurationToInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setDate({ ...date, max: target.value })
+    setWorkInputs({ ...workInputs, durationTo: target.value })
+  }
+
+  const handleResponsibilitiesInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const target = event.target as HTMLTextAreaElement
+    setWorkInputs({ ...workInputs, responsibilities: target.value })
+  }
+
+  const handleWorkDelete = (id: string) => {
+    const newMap = new Map(workxp)
+    newMap.delete(id)
+    setWorkxp(newMap)
+  }
+
+  const handleWorkEdit = (id: string) => {
+    setEditing({ id, beingEdited: true })
+    const { workplace, durationFrom, durationTo, role, responsibilities } = workxp.get(id)!
+    setWorkInputs({ workplace, durationFrom, durationTo, role, responsibilities })
+  }
+
+  const handleConfirmEditWork = (id: string) => {
+    if (
+      workInputs.workplace &&
+      workInputs.durationFrom &&
+      workInputs.durationTo &&
+      workInputs.role &&
+      workInputs.responsibilities
+    ) {
+      const newMap = new Map(workxp)
+      newMap.set(id, {
+        workplace: workInputs.workplace,
+        durationFrom: workInputs.durationFrom,
+        durationTo: workInputs.durationTo,
+        role: workInputs.role,
+        responsibilities: workInputs.responsibilities,
+      })
+
+      setWorkxp(newMap)
+      setWorkInputs({
+        workplace: "",
+        durationFrom: "",
+        durationTo: "",
+        role: "",
+        responsibilities: "",
+      })
+      setEditing({ id: "", beingEdited: false })
+    }
+  }
+
+  const handleCancelEditWork = () => {
+    setWorkInputs({
+      workplace: "",
+      durationFrom: "",
+      durationTo: "",
+      role: "",
+      responsibilities: "",
+    })
+    setEditing({ id: "", beingEdited: false })
+  }
+
   return (
     <div className="card">
       <h2>Work Experience</h2>
-      <button className="button" onClick={handleClick}>
-        + Add work experience
-      </button>
+
+      <form onSubmit={(e) => e.preventDefault()}>
+        <label htmlFor="workplace" className="input__label">
+          Workplace
+        </label>
+        <input
+          className="input__field"
+          type="text"
+          name="workplace"
+          id="workplace"
+          placeholder="Youtube"
+          onChange={(event) => handleWorkplaceInputChange(event)}
+          value={workInputs.workplace}
+        />
+
+        <label htmlFor="workRole" className="input__label">
+          Role
+        </label>
+        <input
+          className="input__field"
+          type="text"
+          name="workRole"
+          id="workRole"
+          placeholder="Junior Frontend Developer"
+          onChange={(event) => handleRoleInputChange(event)}
+          value={workInputs.role}
+        />
+
+        <label htmlFor="durationFrom" className="input__label">
+          From
+        </label>
+        <input
+          className="input__field"
+          type="date"
+          name="durationFrom"
+          id="durationFrom"
+          onChange={(event) => handleDurationFromInputChange(event)}
+          value={workInputs.durationFrom}
+          max={date.max}
+        />
+
+        <label htmlFor="durationTo" className="input__label">
+          To
+        </label>
+        <input
+          className="input__field"
+          type="date"
+          name="durationTo"
+          id="durationTo"
+          onChange={(event) => handleDurationToInputChange(event)}
+          value={workInputs.durationTo}
+          min={date.min}
+        />
+
+        <label htmlFor="responsibility" className="input__label">
+          Responsibilities
+        </label>
+        <textarea
+          className="input__field"
+          name="responsibility"
+          id="responsibility"
+          onChange={handleResponsibilitiesInputChange}
+          value={workInputs.responsibilities}
+          placeholder="To add a new bullet point, move to a new line"
+          rows={6}
+        ></textarea>
+
+        {editing.beingEdited ? (
+          <>
+            <button className="button" type="submit" onClick={() => handleConfirmEditWork(editing.id)}>
+              Confirm
+            </button>
+            <button className="button" type="button" onClick={handleCancelEditWork}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button className="button" onClick={handleAddWork}>
+            + Add work experience
+          </button>
+        )}
+      </form>
+
+      <ul>
+        {Array.from(workxp).map(([id, work]) => (
+          <li key={id} className="list-item education-item">
+            <div>
+              <p>{work.workplace}</p>
+            </div>
+
+            {!editing.beingEdited && (
+              <div>
+                <button className="button" onClick={() => handleWorkEdit(id)}>
+                  Edit
+                </button>
+                {"|"}
+                <button className="button" onClick={() => handleWorkDelete(id)}>
+                  Delete
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-const Forms = ({ identity, contact, education, skills }: FormsProps) => (
+const Forms = ({ identity, contact, education, skills, work }: FormsProps) => (
   <div className="inter form-container">
-    <Header />
-    <IdentityDetails identity={identity} />
-    <ContactDetails contact={contact} />
-    <EducationDetails education={education} />
-    <SkillDetails skills={skills} />
-    <WorkExperience />
+    <Header
+      setIdentity={identity.setIdentity}
+      setContact={contact.setContact}
+      setEducation={education.setEducation}
+      setSkills={skills.setSkills}
+      setWorkxp={work.setWorkxp}
+    />
+    <IdentityForm identity={identity} />
+    <ContactForm contact={contact} />
+    <EducationForm education={education} />
+    <SkillForm skills={skills} />
+    <WorkExperienceForm work={work} />
   </div>
 )
 
