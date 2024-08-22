@@ -20,6 +20,16 @@ h2 {
   border-radius: var(--size-radius);
 }
 
+.input__field:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
 .education-item p {
   margin-block: 0.2rem;
+}
+
+.input__field[id="responsibility"] {
+  resize: none;
+  overflow-y: auto;
 }
