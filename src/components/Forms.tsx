@@ -322,6 +322,7 @@ const EducationDetails = ({ education: { education, setEducation } }: { educatio
 
 const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["skills"] }) => {
   const [skillInput, setSkillInput] = useState("")
+  const [editing, setEditing] = useState({ id: "", beingEdited: false })
 
   const handleSkillInputChange = (event: ReactFormInputEvent) => {
     const target = event.target as HTMLInputElement
@@ -338,23 +339,34 @@ const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["s
     }
   }
 
-  const handleSkillEdit = (id: string) => {
-    const newValue = prompt("Edit skill", skills.get(id))
-    if (newValue === "") {
-      handleSkillDelete(id)
-    } else if (newValue === null) {
-      alert("Edit cancelled")
-    } else {
-      const newSkills = new Map(skills)
-      newSkills.set(id, newValue)
-      setSkills(newSkills)
-    }
-  }
-
   const handleSkillDelete = (id: string) => {
     const newSkills = new Map(skills)
     newSkills.delete(id)
     setSkills(newSkills)
+  }
+
+  const handleSkillEdit = (id: string) => {
+    const prevSkill = skills.get(id)!
+    setEditing({ id, beingEdited: true })
+    setSkillInput(prevSkill)
+  }
+
+  const handleConfirmSkillEdit = (id: string) => {
+    if (skillInput) {
+      const newMap = new Map(skills)
+      newMap.set(id, skillInput)
+
+      setSkills(newMap)
+      setSkillInput("")
+      setEditing({ id: "", beingEdited: false })
+    } else {
+      alert("Fill required fields or cancel edit and delete item")
+    }
+  }
+
+  const handleCancelSkillEdit = () => {
+    setEditing({ id: "", beingEdited: false })
+    setSkillInput("")
   }
 
   return (
@@ -374,24 +386,37 @@ const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["s
           onChange={handleSkillInputChange}
           value={skillInput}
         />
-        <button className="button" onClick={handleAddSkill}>
-          + Add skill
-        </button>
+        {!editing.beingEdited ? (
+          <button className="button" onClick={handleAddSkill}>
+            + Add skill
+          </button>
+        ) : (
+          <>
+            <button className="button" type="submit" onClick={() => handleConfirmSkillEdit(editing.id)}>
+              Confirm
+            </button>
+            <button className="button" type="button" onClick={handleCancelSkillEdit}>
+              Cancel
+            </button>
+          </>
+        )}
       </form>
 
       <ul>
         {Array.from(skills).map(([id, skill]) => (
           <li key={id} className="list-item">
             <span>{skill}</span>
-            <div>
-              <button className="button" onClick={() => handleSkillEdit(id)}>
-                Edit
-              </button>
-              {"|"}
-              <button className="button" onClick={() => handleSkillDelete(id)}>
-                Delete
-              </button>
-            </div>
+            {!editing.beingEdited && (
+              <div>
+                <button className="button" onClick={() => handleSkillEdit(id)}>
+                  Edit
+                </button>
+                {"|"}
+                <button className="button" onClick={() => handleSkillDelete(id)}>
+                  Delete
+                </button>
+              </div>
+            )}
           </li>
         ))}
       </ul>
