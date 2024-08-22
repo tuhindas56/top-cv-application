@@ -20,6 +20,6 @@ h2 {
   border-radius: var(--size-radius);
 }
 
-.education-form.hidden {
-  display: none;
+.education-item p {
+  margin-block: 0.2rem;
 }
