@@ -1,63 +1,54 @@
 import "../styles/ResumePreview.css"
-import { Contact, Identity } from "../sharedTypes"
-
-interface Duration {
-  from: string
-  to: string
-}
-
-interface EducationDetail {
-  isSchool: boolean
-  course: string
-  duration: Duration
-  school: string
-  university: string
-}
-
-interface WorkExperienceDetail {
-  company: string
-  duration: Duration
-  responsibilities: string[]
-  role: string
-}
+import { Contact, Education, Identity } from "../sharedTypes"
 
 const ContactSection = ({ contact }: { contact: Contact }) => (
   <section className="contact">
     <h3 className="jsf-sans">Contact</h3>
 
-    <p className="email inter">{contact.email ? contact.email : "youremail@example.com"}</p>
-    <p className="phone inter">{contact.phone ? contact.phone : "+1-XXX-XXX-XXXX"}</p>
+    <p className="email inter">{contact.email ? contact.email : "Your email appears here"}</p>
+    {contact.phone && <p className="phone inter">{contact.phone}</p>}
   </section>
 )
 
-const EducationQualification = ({
-  isSchool = false,
-  course = "No course",
-  duration = { from: "20XX", to: "20XX" },
-  school = "Some cool high school",
-  university,
-}: EducationDetail) => (
-  <div className="sub-section">
+const EducationQualification = ({ course, durationFrom, durationTo, institute }: Education) => (
+  <li className="sub-section">
     <h4 className="jsf-sans">Educational Qualification</h4>
 
-    <p className="jsf-sans">{isSchool ? "School" : "University"}</p>
-    <p className="jsf-sans">{school || university}</p>
+    <p className="jsf-sans institute">{institute}</p>
 
-    {!isSchool && <p className="course inter">{course}</p>}
+    {course && <p className="course bold">{course}</p>}
+
     <p className="duration jsf-sans">
-      {duration.from} - {duration.to}
+      {durationFrom} - {durationTo}
     </p>
-  </div>
+  </li>
 )
 
-const EducationSection = () => (
-  <section className="education">
-    <h3 className="jsf-sans">Education</h3>
+const EducationSection = ({ education }: { education: Map<string, Education> }) => {
+  const educationArray = Array.from(education)
 
-    {/* <EducationQualification isSchool={false} />
-    <EducationQualification isSchool={true} /> */}
-  </section>
-)
+  return (
+    <section className="education">
+      <h3 className="jsf-sans">Education</h3>
+
+      {!educationArray.length ? (
+        <p className="inter">Qualifications appear here</p>
+      ) : (
+        <ul className="inter">
+          {educationArray.map(([id, { course, durationFrom, durationTo, institute }]) => (
+            <EducationQualification
+              key={id}
+              course={course}
+              durationFrom={durationFrom}
+              durationTo={durationTo}
+              institute={institute}
+            />
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
 
 const SkillsSection = ({ skills }: { skills: Map<string, string> }) => {
   const skillsArray = Array.from(skills)
@@ -79,26 +70,26 @@ const SkillsSection = ({ skills }: { skills: Map<string, string> }) => {
   )
 }
 
-const WorkExperience = ({
-  company = "Tempest",
-  duration = { from: "20XX", to: "20XX" },
-  responsibilities = ["slacked off", "also slacked off", "slacked off some more"],
-  role = "Web Developer",
-}: WorkExperienceDetail) => (
-  <div className="sub-section">
-    <h4 className="jsf-sans">{role}</h4>
-    <p className="company jsf-sans">{company}</p>
-    <p className="duration jsf-sans">
-      {duration.from} - {duration.to}
-    </p>
+// const WorkExperienceDetail = ({
+//   company = "Tempest",
+//   duration = { from: "20XX", to: "20XX" },
+//   responsibilities = ["slacked off", "also slacked off", "slacked off some more"],
+//   role = "Web Developer",
+// }: WorkExperience) => (
+//   <div className="sub-section">
+//     <h4 className="jsf-sans">{role}</h4>
+//     <p className="company jsf-sans">{company}</p>
+//     <p className="duration jsf-sans">
+//       {duration.from} - {duration.to}
+//     </p>
 
-    <ul className="inter">
-      {responsibilities.map((responsibility, index) => (
-        <li key={index}>{responsibility}</li>
-      ))}
-    </ul>
-  </div>
-)
+//     <ul className="inter">
+//       {responsibilities.map((responsibility, index) => (
+//         <li key={index}>{responsibility}</li>
+//       ))}
+//     </ul>
+//   </div>
+// )
 
 const WorkExperienceSection = () => (
   <section className="work">
@@ -113,10 +104,12 @@ const WorkExperienceSection = () => (
 const ResumePreview = ({
   identity,
   contact,
+  education,
   skills,
 }: {
   identity: Identity
   contact: Contact
+  education: Map<string, Education>
   skills: Map<string, string>
 }) => (
   <div className="resumepreview card">
@@ -126,7 +119,7 @@ const ResumePreview = ({
     </div>
 
     <ContactSection contact={contact} />
-    <EducationSection />
+    <EducationSection education={education} />
     <SkillsSection skills={skills} />
     <WorkExperienceSection />
 

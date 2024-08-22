@@ -1,16 +1,18 @@
 import { useState } from "react"
 import { v4 as uuid } from "uuid"
 import { ReactFormInputEvent } from "../App"
-import { Contact, Identity } from "../sharedTypes"
+import { Contact, Education, Identity } from "../sharedTypes"
 import "../styles/Forms.css"
 
 type SetContactState = React.Dispatch<React.SetStateAction<Contact>>
 type SetIdentityState = React.Dispatch<React.SetStateAction<Identity>>
+type SetEducationState = React.Dispatch<React.SetStateAction<Map<string, Education>>>
 type SetSkillState = React.Dispatch<React.SetStateAction<Map<string, string>>>
 
 interface FormsProps {
   contact: { contact: Contact; setContact: SetContactState }
   identity: { identity: Identity; setIdentity: SetIdentityState }
+  education: { education: Map<string, Education>; setEducation: SetEducationState }
   skills: { skills: Map<string, string>; setSkills: SetSkillState }
 }
 
@@ -105,7 +107,7 @@ const ContactDetails = ({ contact: { contact, setContact } }: { contact: FormsPr
       />
 
       <label className="input__label" htmlFor="phone">
-        Phone no.
+        Phone no. (optional)
       </label>
       <input
         className="input__field"
@@ -120,25 +122,200 @@ const ContactDetails = ({ contact: { contact, setContact } }: { contact: FormsPr
   )
 }
 
-const EducationDetails = () => {
-  const handleClick = () => {
-    alert("added")
+const EducationDetails = ({ education: { education, setEducation } }: { education: FormsProps["education"] }) => {
+  const [educationInputs, setEducationInputs] = useState({
+    courseInput: "",
+    durationFromInput: "",
+    durationToInput: "",
+    instituteInput: "",
+  })
+  const [minDate, setMinDate] = useState("")
+  const [editing, setEditing] = useState({ id: "", beingEdited: false })
+
+  const handleInstituteInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setEducationInputs({ ...educationInputs, instituteInput: target.value })
   }
+
+  const handleCourseInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setEducationInputs({ ...educationInputs, courseInput: target.value })
+  }
+
+  const handleDurationFromInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setMinDate(target.value)
+    setEducationInputs({ ...educationInputs, durationFromInput: target.value })
+  }
+
+  const handleDurationToInputChange = (event: ReactFormInputEvent) => {
+    const target = event.target as HTMLInputElement
+    setEducationInputs({ ...educationInputs, durationToInput: target.value })
+  }
+
+  const handleAddEducation = () => {
+    if (educationInputs.instituteInput && educationInputs.durationFromInput && educationInputs.durationToInput) {
+      const newMap = new Map(education)
+      newMap.set(uuid(), {
+        course: educationInputs.courseInput,
+        durationFrom: educationInputs.durationFromInput,
+        durationTo: educationInputs.durationToInput,
+        institute: educationInputs.instituteInput,
+      })
+
+      setEducation(newMap)
+      setEducationInputs({
+        courseInput: "",
+        durationFromInput: "",
+        durationToInput: "",
+        instituteInput: "",
+      })
+    }
+  }
+
+  const handleEducationEdit = (id: string) => {
+    setEditing({ id, beingEdited: true })
+    const { course, durationFrom, durationTo, institute } = education.get(id)!
+    setEducationInputs({
+      courseInput: course,
+      durationFromInput: durationFrom,
+      durationToInput: durationTo,
+      instituteInput: institute,
+    })
+  }
+
+  const handleConfirmEditEducation = (id: string) => {
+    if (educationInputs.instituteInput && educationInputs.durationFromInput && educationInputs.durationToInput) {
+      const newMap = new Map(education)
+      newMap.set(id, {
+        course: educationInputs.courseInput,
+        durationFrom: educationInputs.durationFromInput,
+        durationTo: educationInputs.durationToInput,
+        institute: educationInputs.instituteInput,
+      })
+
+      setEducation(newMap)
+      setEducationInputs({
+        courseInput: "",
+        durationFromInput: "",
+        durationToInput: "",
+        instituteInput: "",
+      })
+      setEditing({ id: "", beingEdited: false })
+    } else {
+      alert("Fill required fields or cancel edit and delete item")
+    }
+  }
+
+  const handleCancelEditEducation = () => {
+    setEditing({ id: "", beingEdited: false })
+    setEducationInputs({
+      courseInput: "",
+      durationFromInput: "",
+      durationToInput: "",
+      instituteInput: "",
+    })
+  }
+
+  const handleEducationDelete = (id: string) => {
+    const newMap = new Map(education)
+    newMap.delete(id)
+    setEducation(newMap)
+  }
+
   return (
     <div className="card">
       <h2>Education</h2>
 
-      <button className="button" onClick={handleClick}>
-        + Add education
-      </button>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <label htmlFor="institute" className="input__label">
+          Institute
+        </label>
+        <input
+          className="input__field"
+          type="text"
+          name="institute"
+          id="institute"
+          placeholder="School/University"
+          onChange={(event) => handleInstituteInputChange(event)}
+          value={educationInputs.instituteInput}
+        />
 
-      <form className="education-form hidden">
-        <select name="levelofeducation" id="levelofeducation">
-          <option value="school">School</option>
-          <option value="college">College</option>
-          <option value="university">University</option>
-        </select>
+        <label htmlFor="course" className="input__label">
+          Course (optional)
+        </label>
+        <input
+          className="input__field"
+          type="text"
+          name="course"
+          id="course"
+          placeholder="Bachelor of Commerce"
+          onChange={(event) => handleCourseInputChange(event)}
+          value={educationInputs.courseInput}
+        />
+
+        <label htmlFor="durationFrom" className="input__label">
+          From
+        </label>
+        <input
+          className="input__field"
+          type="date"
+          name="durationFrom"
+          id="durationFrom"
+          onChange={(event) => handleDurationFromInputChange(event)}
+          value={educationInputs.durationFromInput}
+        />
+
+        <label htmlFor="durationTo" className="input__label">
+          To
+        </label>
+        <input
+          className="input__field"
+          type="date"
+          name="durationTo"
+          id="durationTo"
+          onChange={(event) => handleDurationToInputChange(event)}
+          value={educationInputs.durationToInput}
+          min={minDate}
+        />
+
+        {editing.beingEdited ? (
+          <>
+            <button className="button" type="submit" onClick={() => handleConfirmEditEducation(editing.id)}>
+              Confirm
+            </button>
+            <button className="button" type="button" onClick={handleCancelEditEducation}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button className="button" type="submit" onClick={handleAddEducation}>
+            + Add education
+          </button>
+        )}
       </form>
+
+      <ul>
+        {Array.from(education).map(([id, education]) => (
+          <li key={id} className="list-item education-item">
+            <div>
+              <p>{education.institute}</p>
+            </div>
+
+            {!editing.beingEdited && (
+              <div>
+                <button className="button" onClick={() => handleEducationEdit(id)}>
+                  Edit
+                </button>
+                {"|"}
+                <button className="button" onClick={() => handleEducationDelete(id)}>
+                  Delete
+                </button>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -152,7 +329,7 @@ const SkillDetails = ({ skills: { skills, setSkills } }: { skills: FormsProps["s
   }
 
   const handleAddSkill = () => {
-    if (skillInput && !skills.has(skillInput)) {
+    if (skillInput) {
       const newMap = new Map(skills)
       newMap.set(uuid(), skillInput)
 
@@ -236,12 +413,12 @@ const WorkExperience = () => {
   )
 }
 
-const Forms = ({ identity, contact, skills }: FormsProps) => (
+const Forms = ({ identity, contact, education, skills }: FormsProps) => (
   <div className="inter form-container">
     <Header />
     <IdentityDetails identity={identity} />
     <ContactDetails contact={contact} />
-    <EducationDetails />
+    <EducationDetails education={education} />
     <SkillDetails skills={skills} />
     <WorkExperience />
   </div>
