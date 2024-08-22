@@ -16,9 +16,9 @@ export interface Education {
 }
 
 export interface WorkExperience {
-  company: string
+  workplace: string
   durationFrom: string
   durationTo: string
-  responsibilities: string[]
+  responsibilities: string
   role: string
 }
