@@ -48,3 +48,7 @@ h6 {
   font-family: "Josefin Sans", sans-serif;
   font-optical-sizing: auto;
 }
+
+.bold {
+  font-weight: 600;
+}
