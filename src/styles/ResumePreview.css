@@ -57,6 +57,7 @@ h3.role {
 
 .contact {
   grid-area: contact;
+  margin-bottom: 1rem;
 }
 
 .education {
@@ -106,4 +107,9 @@ h3.role {
 
 .institute {
   font-size: 1rem;
+}
+
+.education ul {
+  list-style: none;
+  padding-inline: 0;
 }
