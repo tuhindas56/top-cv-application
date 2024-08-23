@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { v4 as uuid } from "uuid"
 import { Contact, Education, Identity, WorkExperience } from "../sharedTypes"
 import "../styles/Forms.css"
@@ -54,14 +54,11 @@ const Header = ({ setIdentity, setContact, setEducation, setSkills, setWorkxp }:
 )
 
 const IdentityForm = ({ identity: { identity, setIdentity } }: { identity: FormsProps["identity"] }) => {
-  const handleNameChange = (event: ReactFormInputEvent) => {
+  const handleInputChange = (event: ReactFormInputEvent, property: "name" | "role") => {
     const target = event.target as HTMLInputElement
-    setIdentity({ ...identity, name: target.value })
-  }
-
-  const handleRoleChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setIdentity({ ...identity, role: target.value })
+    const newIdentity = { ...identity }
+    newIdentity[property] = target.value
+    setIdentity(newIdentity)
   }
 
   return (
@@ -77,7 +74,7 @@ const IdentityForm = ({ identity: { identity, setIdentity } }: { identity: Forms
         name="name"
         id="name"
         placeholder="John Doe"
-        onChange={handleNameChange}
+        onChange={(e) => handleInputChange(e, "name")}
         value={identity.name}
       />
 
@@ -90,7 +87,7 @@ const IdentityForm = ({ identity: { identity, setIdentity } }: { identity: Forms
         name="role"
         id="role"
         placeholder="Web Developer"
-        onChange={handleRoleChange}
+        onChange={(e) => handleInputChange(e, "role")}
         value={identity.role}
       />
     </form>
@@ -98,14 +95,11 @@ const IdentityForm = ({ identity: { identity, setIdentity } }: { identity: Forms
 }
 
 const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps["contact"] }) => {
-  const handleEmailChange = (event: ReactFormInputEvent) => {
+  const handleInputChange = (event: ReactFormInputEvent, property: "email" | "phone") => {
     const target = event.target as HTMLInputElement
-    setContact({ ...contact, email: target.value })
-  }
-
-  const handlePhoneChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setContact({ ...contact, phone: target.value })
+    const newContact = { ...contact }
+    newContact[property] = target.value
+    setContact(newContact)
   }
 
   return (
@@ -121,7 +115,7 @@ const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps
         name="email"
         id="email"
         placeholder="youremail@example.com"
-        onChange={handleEmailChange}
+        onChange={(e) => handleInputChange(e, "email")}
         value={contact.email}
       />
 
@@ -134,7 +128,7 @@ const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps
         id="phone"
         name="phone"
         placeholder="+1 XXX-XXX-XXXX"
-        onChange={handlePhoneChange}
+        onChange={(e) => handleInputChange(e, "phone")}
         value={contact.phone}
       />
     </form>
@@ -151,32 +145,28 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
   const [date, setDate] = useState({ min: "", max: "" })
   const [editing, setEditing] = useState({ id: "", beingEdited: false })
 
-  const handleInstituteInputChange = (event: ReactFormInputEvent) => {
+  const handleInputChange = (
+    event: ReactFormInputEvent,
+    property: "courseInput" | "durationFromInput" | "durationToInput" | "instituteInput"
+  ) => {
     const target = event.target as HTMLInputElement
-    setEducationInputs({ ...educationInputs, instituteInput: target.value })
+    const newEducation = { ...educationInputs }
+
+    newEducation[property] = target.value
+
+    if (property === "durationFromInput") {
+      setDate({ ...date, min: target.value })
+    } else if (property === "durationToInput") {
+      setDate({ ...date, max: target.value })
+    }
+
+    setEducationInputs(newEducation)
   }
 
-  const handleCourseInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setEducationInputs({ ...educationInputs, courseInput: target.value })
-  }
-
-  const handleDurationFromInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setDate({ ...date, min: target.value })
-    setEducationInputs({ ...educationInputs, durationFromInput: target.value })
-  }
-
-  const handleDurationToInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setDate({ ...date, max: target.value })
-    setEducationInputs({ ...educationInputs, durationToInput: target.value })
-  }
-
-  const handleAddEducation = () => {
+  const handleAddOrEditEducation = (id?: string, edit?: boolean) => {
     if (educationInputs.instituteInput && educationInputs.durationFromInput && educationInputs.durationToInput) {
       const newMap = new Map(education)
-      newMap.set(uuid(), {
+      newMap.set(id && edit ? id : uuid(), {
         course: educationInputs.courseInput,
         durationFrom: educationInputs.durationFromInput,
         durationTo: educationInputs.durationToInput,
@@ -190,6 +180,10 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
         durationToInput: "",
         instituteInput: "",
       })
+
+      if (edit) setEditing({ id: "", beingEdited: false })
+    } else {
+      alert("Fill required fields!")
     }
   }
 
@@ -202,29 +196,6 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
       durationToInput: durationTo,
       instituteInput: institute,
     })
-  }
-
-  const handleConfirmEditEducation = (id: string) => {
-    if (educationInputs.instituteInput && educationInputs.durationFromInput && educationInputs.durationToInput) {
-      const newMap = new Map(education)
-      newMap.set(id, {
-        course: educationInputs.courseInput,
-        durationFrom: educationInputs.durationFromInput,
-        durationTo: educationInputs.durationToInput,
-        institute: educationInputs.instituteInput,
-      })
-
-      setEducation(newMap)
-      setEducationInputs({
-        courseInput: "",
-        durationFromInput: "",
-        durationToInput: "",
-        instituteInput: "",
-      })
-      setEditing({ id: "", beingEdited: false })
-    } else {
-      alert("Fill required fields or cancel edit and delete item")
-    }
   }
 
   const handleCancelEditEducation = () => {
@@ -257,7 +228,7 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           name="institute"
           id="institute"
           placeholder="School/University"
-          onChange={(event) => handleInstituteInputChange(event)}
+          onChange={(e) => handleInputChange(e, "instituteInput")}
           value={educationInputs.instituteInput}
         />
 
@@ -270,7 +241,7 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           name="course"
           id="course"
           placeholder="Bachelor of Commerce"
-          onChange={(event) => handleCourseInputChange(event)}
+          onChange={(e) => handleInputChange(e, "courseInput")}
           value={educationInputs.courseInput}
         />
 
@@ -282,7 +253,7 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           type="date"
           name="durationFrom"
           id="durationFrom"
-          onChange={(event) => handleDurationFromInputChange(event)}
+          onChange={(e) => handleInputChange(e, "durationFromInput")}
           value={educationInputs.durationFromInput}
           max={date.max}
         />
@@ -295,14 +266,14 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           type="date"
           name="durationTo"
           id="durationTo"
-          onChange={(event) => handleDurationToInputChange(event)}
+          onChange={(e) => handleInputChange(e, "durationToInput")}
           value={educationInputs.durationToInput}
           min={date.min}
         />
 
         {editing.beingEdited ? (
           <>
-            <button className="button" type="submit" onClick={() => handleConfirmEditEducation(editing.id)}>
+            <button className="button" type="submit" onClick={() => handleAddOrEditEducation(editing.id, true)}>
               Confirm
             </button>
             <button className="button" type="button" onClick={handleCancelEditEducation}>
@@ -310,7 +281,7 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
             </button>
           </>
         ) : (
-          <button className="button" type="submit" onClick={handleAddEducation}>
+          <button className="button" type="submit" onClick={() => handleAddOrEditEducation()}>
             + Add education
           </button>
         )}
@@ -350,13 +321,17 @@ const SkillForm = ({ skills: { skills, setSkills } }: { skills: FormsProps["skil
     setSkillInput(target.value)
   }
 
-  const handleAddSkill = () => {
+  const handleAddOrEditSkill = (id?: string, edit?: boolean) => {
     if (skillInput) {
       const newMap = new Map(skills)
-      newMap.set(uuid(), skillInput)
+      newMap.set(id && edit ? id : uuid(), skillInput)
 
       setSkills(newMap)
       setSkillInput("")
+
+      if (edit) setEditing({ id: "", beingEdited: false })
+    } else {
+      alert("Fill required field!")
     }
   }
 
@@ -370,19 +345,6 @@ const SkillForm = ({ skills: { skills, setSkills } }: { skills: FormsProps["skil
     const prevSkill = skills.get(id)!
     setEditing({ id, beingEdited: true })
     setSkillInput(prevSkill)
-  }
-
-  const handleConfirmSkillEdit = (id: string) => {
-    if (skillInput) {
-      const newMap = new Map(skills)
-      newMap.set(id, skillInput)
-
-      setSkills(newMap)
-      setSkillInput("")
-      setEditing({ id: "", beingEdited: false })
-    } else {
-      alert("Fill required fields or cancel edit and delete item")
-    }
   }
 
   const handleCancelSkillEdit = () => {
@@ -408,12 +370,12 @@ const SkillForm = ({ skills: { skills, setSkills } }: { skills: FormsProps["skil
           value={skillInput}
         />
         {!editing.beingEdited ? (
-          <button className="button" onClick={handleAddSkill}>
+          <button className="button" onClick={() => handleAddOrEditSkill()}>
             + Add skill
           </button>
         ) : (
           <>
-            <button className="button" type="submit" onClick={() => handleConfirmSkillEdit(editing.id)}>
+            <button className="button" type="submit" onClick={() => handleAddOrEditSkill(editing.id, true)}>
               Confirm
             </button>
             <button className="button" type="button" onClick={handleCancelSkillEdit}>
@@ -456,7 +418,25 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
   const [editing, setEditing] = useState({ id: "", beingEdited: false })
   const [date, setDate] = useState({ min: "", max: "" })
 
-  const handleAddWork = () => {
+  const handleInputChange = (
+    event: ReactFormInputEvent | React.ChangeEvent<HTMLTextAreaElement>,
+    property: "workplace" | "durationFrom" | "durationTo" | "role" | "responsibilities"
+  ) => {
+    const target = event.target as HTMLInputElement
+    const newWork = { ...workInputs }
+
+    newWork[property] = target.value
+
+    if (property === "durationFrom") {
+      setDate({ ...date, min: target.value })
+    } else if (property === "durationTo") {
+      setDate({ ...date, max: target.value })
+    }
+
+    setWorkInputs(newWork)
+  }
+
+  const handleAddOrEditWork = (id?: string, edit?: boolean) => {
     if (
       workInputs.workplace &&
       workInputs.durationFrom &&
@@ -465,7 +445,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
       workInputs.responsibilities
     ) {
       const newMap = new Map(workxp)
-      newMap.set(uuid(), {
+      newMap.set(id && edit ? id : uuid(), {
         workplace: workInputs.workplace,
         durationFrom: workInputs.durationFrom,
         durationTo: workInputs.durationTo,
@@ -481,34 +461,9 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
         role: "",
         responsibilities: "",
       })
+
+      if (edit) setEditing({ id: "", beingEdited: false })
     }
-  }
-
-  const handleWorkplaceInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setWorkInputs({ ...workInputs, workplace: target.value })
-  }
-
-  const handleRoleInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setWorkInputs({ ...workInputs, role: target.value })
-  }
-
-  const handleDurationFromInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setDate({ ...date, min: target.value })
-    setWorkInputs({ ...workInputs, durationFrom: target.value })
-  }
-
-  const handleDurationToInputChange = (event: ReactFormInputEvent) => {
-    const target = event.target as HTMLInputElement
-    setDate({ ...date, max: target.value })
-    setWorkInputs({ ...workInputs, durationTo: target.value })
-  }
-
-  const handleResponsibilitiesInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const target = event.target as HTMLTextAreaElement
-    setWorkInputs({ ...workInputs, responsibilities: target.value })
   }
 
   const handleWorkDelete = (id: string) => {
@@ -521,35 +476,6 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
     setEditing({ id, beingEdited: true })
     const { workplace, durationFrom, durationTo, role, responsibilities } = workxp.get(id)!
     setWorkInputs({ workplace, durationFrom, durationTo, role, responsibilities })
-  }
-
-  const handleConfirmEditWork = (id: string) => {
-    if (
-      workInputs.workplace &&
-      workInputs.durationFrom &&
-      workInputs.durationTo &&
-      workInputs.role &&
-      workInputs.responsibilities
-    ) {
-      const newMap = new Map(workxp)
-      newMap.set(id, {
-        workplace: workInputs.workplace,
-        durationFrom: workInputs.durationFrom,
-        durationTo: workInputs.durationTo,
-        role: workInputs.role,
-        responsibilities: workInputs.responsibilities,
-      })
-
-      setWorkxp(newMap)
-      setWorkInputs({
-        workplace: "",
-        durationFrom: "",
-        durationTo: "",
-        role: "",
-        responsibilities: "",
-      })
-      setEditing({ id: "", beingEdited: false })
-    }
   }
 
   const handleCancelEditWork = () => {
@@ -577,7 +503,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
           name="workplace"
           id="workplace"
           placeholder="Youtube"
-          onChange={(event) => handleWorkplaceInputChange(event)}
+          onChange={(e) => handleInputChange(e, "workplace")}
           value={workInputs.workplace}
         />
 
@@ -590,7 +516,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
           name="workRole"
           id="workRole"
           placeholder="Junior Frontend Developer"
-          onChange={(event) => handleRoleInputChange(event)}
+          onChange={(e) => handleInputChange(e, "role")}
           value={workInputs.role}
         />
 
@@ -602,7 +528,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
           type="date"
           name="durationFrom"
           id="durationFrom"
-          onChange={(event) => handleDurationFromInputChange(event)}
+          onChange={(e) => handleInputChange(e, "durationFrom")}
           value={workInputs.durationFrom}
           max={date.max}
         />
@@ -615,7 +541,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
           type="date"
           name="durationTo"
           id="durationTo"
-          onChange={(event) => handleDurationToInputChange(event)}
+          onChange={(e) => handleInputChange(e, "durationTo")}
           value={workInputs.durationTo}
           min={date.min}
         />
@@ -627,7 +553,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
           className="input__field"
           name="responsibility"
           id="responsibility"
-          onChange={handleResponsibilitiesInputChange}
+          onChange={(e) => handleInputChange(e, "responsibilities")}
           value={workInputs.responsibilities}
           placeholder="To add a new bullet point, move to a new line"
           rows={6}
@@ -635,7 +561,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
 
         {editing.beingEdited ? (
           <>
-            <button className="button" type="submit" onClick={() => handleConfirmEditWork(editing.id)}>
+            <button className="button" type="submit" onClick={() => handleAddOrEditWork(editing.id, true)}>
               Confirm
             </button>
             <button className="button" type="button" onClick={handleCancelEditWork}>
@@ -643,7 +569,7 @@ const WorkExperienceForm = ({ work: { workxp, setWorkxp } }: { work: FormsProps[
             </button>
           </>
         ) : (
-          <button className="button" onClick={handleAddWork}>
+          <button className="button" onClick={() => handleAddOrEditWork()}>
             + Add work experience
           </button>
         )}
