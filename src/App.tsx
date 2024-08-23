@@ -4,8 +4,6 @@ import "./styles/App.css"
 import Forms from "./components/Forms"
 import ResumePreview from "./components/ResumePreview"
 
-export type ReactFormInputEvent = React.FormEvent<HTMLInputElement>
-
 function App() {
   const initialIdentity = { name: "Avery Davis", role: "Web Developer" }
 

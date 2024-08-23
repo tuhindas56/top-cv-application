@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { v4 as uuid } from "uuid"
-import { ReactFormInputEvent } from "../App"
 import { Contact, Education, Identity, WorkExperience } from "../sharedTypes"
 import "../styles/Forms.css"
 
+type ReactFormInputEvent = React.FormEvent<HTMLInputElement>
 type SetContactState = React.Dispatch<React.SetStateAction<Contact>>
 type SetIdentityState = React.Dispatch<React.SetStateAction<Identity>>
 type SetEducationState = React.Dispatch<React.SetStateAction<Map<string, Education>>>
