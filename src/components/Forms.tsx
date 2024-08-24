@@ -137,26 +137,26 @@ const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps
 
 const EducationForm = ({ education: { education, setEducation } }: { education: FormsProps["education"] }) => {
   const [educationInputs, setEducationInputs] = useState({
-    courseInput: "",
-    durationFromInput: "",
-    durationToInput: "",
-    instituteInput: "",
+    course: "",
+    durationFrom: "",
+    durationTo: "",
+    institute: "",
   })
   const [date, setDate] = useState({ min: "", max: "" })
   const [editing, setEditing] = useState({ id: "", beingEdited: false })
 
   const handleInputChange = (
     event: ReactFormInputEvent,
-    property: "courseInput" | "durationFromInput" | "durationToInput" | "instituteInput"
+    property: "course" | "durationFrom" | "durationTo" | "institute"
   ) => {
     const target = event.target as HTMLInputElement
     const newEducation = { ...educationInputs }
 
     newEducation[property] = target.value
 
-    if (property === "durationFromInput") {
+    if (property === "durationFrom") {
       setDate({ ...date, min: target.value })
-    } else if (property === "durationToInput") {
+    } else if (property === "durationTo") {
       setDate({ ...date, max: target.value })
     }
 
@@ -164,21 +164,21 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
   }
 
   const handleAddOrEditEducation = (id?: string, edit?: boolean) => {
-    if (educationInputs.instituteInput && educationInputs.durationFromInput && educationInputs.durationToInput) {
+    if (educationInputs.institute && educationInputs.durationFrom && educationInputs.durationTo) {
       const newMap = new Map(education)
       newMap.set(id && edit ? id : uuid(), {
-        course: educationInputs.courseInput,
-        durationFrom: educationInputs.durationFromInput,
-        durationTo: educationInputs.durationToInput,
-        institute: educationInputs.instituteInput,
+        course: educationInputs.course,
+        durationFrom: educationInputs.durationFrom,
+        durationTo: educationInputs.durationTo,
+        institute: educationInputs.institute,
       })
 
       setEducation(newMap)
       setEducationInputs({
-        courseInput: "",
-        durationFromInput: "",
-        durationToInput: "",
-        instituteInput: "",
+        course: "",
+        durationFrom: "",
+        durationTo: "",
+        institute: "",
       })
 
       if (edit) setEditing({ id: "", beingEdited: false })
@@ -191,20 +191,20 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
     setEditing({ id, beingEdited: true })
     const { course, durationFrom, durationTo, institute } = education.get(id)!
     setEducationInputs({
-      courseInput: course,
-      durationFromInput: durationFrom,
-      durationToInput: durationTo,
-      instituteInput: institute,
+      course: course,
+      durationFrom: durationFrom,
+      durationTo: durationTo,
+      institute: institute,
     })
   }
 
   const handleCancelEditEducation = () => {
     setEditing({ id: "", beingEdited: false })
     setEducationInputs({
-      courseInput: "",
-      durationFromInput: "",
-      durationToInput: "",
-      instituteInput: "",
+      course: "",
+      durationFrom: "",
+      durationTo: "",
+      institute: "",
     })
   }
 
@@ -228,8 +228,8 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           name="institute"
           id="institute"
           placeholder="School/University"
-          onChange={(e) => handleInputChange(e, "instituteInput")}
-          value={educationInputs.instituteInput}
+          onChange={(e) => handleInputChange(e, "institute")}
+          value={educationInputs.institute}
         />
 
         <label htmlFor="course" className="input__label">
@@ -241,8 +241,8 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           name="course"
           id="course"
           placeholder="Bachelor of Commerce"
-          onChange={(e) => handleInputChange(e, "courseInput")}
-          value={educationInputs.courseInput}
+          onChange={(e) => handleInputChange(e, "course")}
+          value={educationInputs.course}
         />
 
         <label htmlFor="durationFrom" className="input__label">
@@ -253,8 +253,8 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           type="date"
           name="durationFrom"
           id="durationFrom"
-          onChange={(e) => handleInputChange(e, "durationFromInput")}
-          value={educationInputs.durationFromInput}
+          onChange={(e) => handleInputChange(e, "durationFrom")}
+          value={educationInputs.durationFrom}
           max={date.max}
         />
 
@@ -266,8 +266,8 @@ const EducationForm = ({ education: { education, setEducation } }: { education: 
           type="date"
           name="durationTo"
           id="durationTo"
-          onChange={(e) => handleInputChange(e, "durationToInput")}
-          value={educationInputs.durationToInput}
+          onChange={(e) => handleInputChange(e, "durationTo")}
+          value={educationInputs.durationTo}
           min={date.min}
         />
 
