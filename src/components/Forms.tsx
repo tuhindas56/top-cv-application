@@ -120,7 +120,7 @@ const ContactForm = ({ contact: { contact, setContact } }: { contact: FormsProps
       />
 
       <label className="input__label" htmlFor="phone">
-        Phone no. (optional)
+        Phone number (optional)
       </label>
       <input
         className="input__field"

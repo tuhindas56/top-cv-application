@@ -1,14 +1,14 @@
 :root {
-  --size-bezel: 2rem;
+  --size-bezel: 1rem;
   --size-radius: 4px;
 }
 
 html {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 body {
-  padding-inline: 1em;
+  padding-inline: 0.4em;
 }
 
 .main-container {
@@ -52,14 +52,34 @@ ul {
   margin-block: 0.4rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 400px) {
+  :root {
+    --size-bezel: 2rem;
+  }
+
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 600px) {
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    padding-inline: 1em;
+  }
+}
+
+@media (min-width: 1200px) {
   body {
     display: grid;
     place-content: center;
   }
 
   .main-container {
-    grid-template-columns: 400px 1fr;
+    grid-template-columns: 400px 700px;
     column-gap: 2rem;
   }
 }

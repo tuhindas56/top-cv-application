@@ -30,25 +30,28 @@ function App() {
 
   const initialWorkxp = new Map()
   initialWorkxp.set(uuid(), {
-    workplace: "The Odin Project",
-    role: "Database Admin",
-    durationFrom: "2021-01-01",
-    durationTo: "2022-01-01",
-    responsibilities: "Deleted a database \n Rewrote main git branch",
-  })
-  initialWorkxp.set(uuid(), {
-    workplace: "That New Startup",
+    workplace: "XYZ Tech Solutions",
     role: "Junior Frontend Developer",
     durationFrom: "2022-01-01",
-    durationTo: "2023-01-01",
-    responsibilities: "Wrote tightly coupled code \n Called a directory a 'folder' \n Force pushed commits",
+    durationTo: "2024-01-01",
+    responsibilities:
+      "Developed responsive web apps with HTML, CSS, and React, boosting user engagement by 30% \n Collaborated on UI/UX design, increasing site accessibility by 20%",
   })
   initialWorkxp.set(uuid(), {
-    workplace: "McDonalds",
-    role: "Cashier",
-    durationFrom: "2023-01-01",
-    durationTo: "2024-01-01",
-    responsibilities: "Greeted people \n Took orders \n Had leftover fries",
+    workplace: "Web Innovators Ltd.",
+    role: "Full-Stack Developer",
+    durationFrom: "2019-06-01",
+    durationTo: "2021-12-01",
+    responsibilities:
+      "Built scalable web apps using Node.js and MongoDB, cutting server load times by 40% \n Led a 4-member team on an e-commerce platform, increasing client revenue by 25%",
+  })
+  initialWorkxp.set(uuid(), {
+    workplace: "CodeCraft Technologies",
+    role: " Back-End Developer",
+    durationFrom: "2016-01-01",
+    durationTo: "2017-01-01",
+    responsibilities:
+      "Developed RESTful APIs with Python/Django, enabling smooth front-end integration \n Optimized database queries, improving response times by 35%",
   })
 
   const [identity, setIdentity] = useState(initialIdentity)
